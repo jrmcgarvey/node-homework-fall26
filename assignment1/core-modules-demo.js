@@ -10,16 +10,16 @@ if (!fs.existsSync(sampleFilesDir)) {
 
 // OS module
 
-console.log("platform: ", os.platform())
-console.log("cpus: ", os.cpus())
-console.log("total memory: ", os.totalmem())
+console.log("Platform: ", os.platform())
+console.log("CPU: ", os.cpus())
+console.log("Total Memory: ", os.totalmem())
 console.log("free memory: ", os.freemem())
 
 
 // Path module
 
 const sampleFile = path.join(sampleFilesDir, 'demo.txt')
-console.log("file to create: ", sampleFile)
+console.log("Joined path: ", sampleFile)
 
 
 // fs.promises API
@@ -27,7 +27,7 @@ console.log("file to create: ", sampleFile)
 const run = async (fn) => {
   await fsp.writeFile(fn, "Hello from fs.promises!", "utf8" )
   const data = await fsp.readFile( fn, "utf8")
-  console.log(data)
+  console.log("fs.promises read:",data)
 }
 
 try {

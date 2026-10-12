@@ -3,12 +3,12 @@ const path = require('path');
 
 
 // Write a sample file for demonstration
-fs.writeFile(path.join(__dirname, 'sample.txt'), 'Hello, async world!', (err) => {
+fs.writeFile(path.join(__dirname, 'sample-files', 'sample.txt'), 'Hello, async world!', (err) => {
   if (err) {
     console.error('Error writing file:', err);
   } else {
     // 1. Callback style
-    fs.readFile(path.join(__dirname, 'sample.txt'), 'utf8', (err, data) => {
+    fs.readFile(path.join(__dirname, 'sample-files', 'sample.txt'), 'utf8', (err, data) => {
       if (err) {
         console.error('Error reading file at 1:', err);
       } else {
