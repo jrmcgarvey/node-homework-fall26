@@ -1,4 +1,4 @@
-function getTime(req, res) {
+function getTime(_req, res) {
   res.status(200).json({
     time: new Date().toString(),
   });

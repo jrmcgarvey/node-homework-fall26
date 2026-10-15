@@ -18,17 +18,17 @@ app.use(express.json());
 //   });
 // });
 
-global.tasks = []
-global.users = []
+global.tasks = [];
+global.users = [];
 global.user_id = null;
 
-const userRouter = require('./routes/userRoutes')
-const notFound = require('./middleware/not-found')
-const errorHandler = require('./middleware/error-handler')
+const userRouter = require("./routes/userRoutes");
+const notFound = require("./middleware/not-found");
+const errorHandler = require("./middleware/error-handler");
 
-app.use('/api', userRouter)
-app.use(notFound)
-app.use(errorHandler)
+app.use("/api", userRouter);
+app.use(notFound);
+app.use(errorHandler);
 
 const port = process.env.PORT || 3000;
 

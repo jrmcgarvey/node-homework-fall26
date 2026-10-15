@@ -16,7 +16,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   const logString = `[${new Date().toString()}]: ${req.method} ${req.path} (${req.requestId})` 
   console.log(logString)
   next()

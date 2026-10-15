@@ -1,6 +1,6 @@
-const serverError = async (err, req, res, next) => {
-    res.status(500).json({message: "A server error occurred"})
-    console.error("A server error occurred: ", err)
-}
+const serverError = async (err, _req, res, next) => {
+  res.status(500).json({ message: "A server error occurred" });
+  console.error("A server error occurred: ", err);
+};
 
-module.exports = serverError
+module.exports = serverError;

@@ -3,7 +3,7 @@ const dogs = require("../dogData");
 
 const router = express.Router();
 
-router.get("/dogs", (req, res) => {
+router.get("/dogs", (_req, res) => {
   res.status(200).json(dogs);
 });
 
@@ -22,7 +22,7 @@ router.post("/adopt", (req, res) => {
   });
 });
 
-router.get("/error", (req, res, next) => {
+router.get("/error", (_req, _res, next) => {
   next(new Error("Test error"));
 });
 

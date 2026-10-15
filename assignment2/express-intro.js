@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-app.get("/info", (req, res) => {
+app.get("/info", (_req, res) => {
   res.json({
     message: "This is an Express server.",
   });
