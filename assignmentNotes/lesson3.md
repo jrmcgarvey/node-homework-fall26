@@ -19,7 +19,7 @@
 
 ### Express
 
-Express listens on the socket for inbound HTTP requests.  When it gets one, it parses it, and passes it on to any configured middleware and request handlers.  (Your controllers are request handlers.)  You configure your express app with an ordered chain of middleware and requst hander functions that are to be called.  Each is called only if the pattern (method and path, or maybe just path) matches.  (Some middleware won't have a pattern, so those functions are always called.)  Each function is called with a req object (all the stuff from the request) and a response object (which is how the response is sent.)  The middleware functions are also passed a next parameter, which is how each links to the next function in the chain.
+Express listens on the socket for inbound HTTP requests.  When it gets one, it parses it, and passes it on to any configured middleware and request handlers.  (Your controllers are request handlers.)  You configure your express app with an ordered chain of middleware and request hander functions that are to be called.  Each is called only if the pattern (method and path, or maybe just path) matches.  (Some middleware won't have a pattern, so those functions are always called.)  Each function is called with a req object (all the stuff from the request) and a response object (which is how the response is sent.)  The middleware functions are also passed a next parameter, which is how each links to the next function in the chain.
 
 Some common properties of the req object:
 
@@ -48,18 +48,19 @@ Each of these is only called if the pattern matches, which may be any pattern, a
 The error handler, at the end of the chain, has 4 parameters: err, req, res, next.  This is how Express knows it is an error handler.
 
 *Middleware* must do one of the following:
-- send a message (res.send() or res.json()).  You probably want to set the status code too.
+- send a response (res.send() or res.json()).  You probably want to set the status code too.
 - throw an error
+- call next()
 
-Middleware must NOT do several of these for one invocation.  Make sure your code path only does one of these, depending on the conditional logic.  If it sends a message and then calls next(), a request handler will then try to send a message, and that will cause an error to be thrown, something about "response headers already sent".  Watch for this one!  You will see it at some point, and now you know what causes it.
+Middleware must NOT do several of these for one invocation.  Make sure your code path only does one of these, depending on the conditional logic.  If it sends a response and then calls next(), a request handler will then try to send another response, and that will cause an error to be thrown, something about "response headers already sent".  Watch for this one!  You will see it at some point, and now you know what causes it.
 
 *Request handlers* must do one of the following (but not both):
-- send a message
+- send a response
 - throw an error
 
-The *error handler* must send a message.
+The *error handler* must send a response.
 
-Special case: You can't throw an error from middleware or a request hander from inside a callback. That would crash the server.  You call next(err) instead of throwing the error (or allowing it to be thrown).  You call next(err) instead.  If you need next(err) inside a request handler, you specify req, res, next as the parameters for that request handler.
+Special case: You can't throw an error from middleware or a request hander from inside a callback. That would crash the server.  You call next(err) instead of throwing the error (or allowing it to be thrown). If you need to call next(err) inside a request handler, you specify req, res, next as the parameters for that request handler.
 
 ## Time consuming operations
 
@@ -87,13 +88,13 @@ Ok, note first: You can declare your middleware and response handlers to be asyn
 
 Now, who waits in this case? The original requester waits ... but not the other users.  As soon as the await statement is reached, `getData()` is dispatched and the function returns so that the next message can be processed.
 
-What happens if getData() throws an error?  In the case above, the error hander catches it.  However, the error handler might not convey a meaningful error message back for some possible events.  So, you can do:
+What happens if `getData()` throws an error?  In the case above, the error hander catches it.  However, the error handler might not convey a meaningful error message back for some possible events.  So, you can do:
 
 ```js
 const requestHandler = async {(req, res) =>
-    const dataObj 
+    const dataObj = {}
     try {
-        dataObj await getData()
+        dataObj = await getData()
     } catch (err) {
         return res.status(500).json({ message: "Oops, an error calling getData()", error: err})
     }
@@ -109,4 +110,20 @@ Use the appropriate status code for the situation:
 
 [http status codes](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status)
 
+If the error originates with the caller (i.e. not on the server side), you should also give a meaningful error message.
+
 Don't send stack traces and the like to the caller!  Log them instead!  If an unexpected error happens, you *should* log the error and the stack trace, so that you can fix your program error or otherwise correct the situation.
+
+## Preview of lesson 4
+
+You are building the back end for a To Do List to be used by multiple users.  Currently this handles users, but it doesn't let them create any data.  You need the following:
+
+1. Create/read/update/delete tasks.  This is a new router and controller.
+
+2. Authentication: No one should be able to operate on tasks unless they are logged in.  You want middleware that checks that the user is authenticated, but this middleware can only run sometimes. That is, it runs for the protected operations on tasks, but not for the unprotected operations like register and logon. (Otherwise no one could do those operations.)
+
+3. Authorization: No one should be able to do CRUD operations on tasks except the ones belonging to them.
+
+4. Validation: No one should be able to put nonsense in stored data.  The email, password, user name, and task title have to be something plausible and usable.
+
+5. Password storage: At present, the password is stored in plaintext.  This is bad.  A hacker who breaks in can discover everyone's passwords. The owner or administrator of the app could discover everyone's password. Some of those people may reuse passwords for other applications.  Discovery of passwords must be prevented using password hashing.
