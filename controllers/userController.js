@@ -1,4 +1,5 @@
 const { userSchema } = require("../validation/userSchema");
+const pool = require("../db/pg-pool");
 const crypto = require("crypto");
 const util = require("util");
 const scrypt = util.promisify(crypto.scrypt);
@@ -23,23 +24,47 @@ const register = async (req, res) => {
   if (error) {
     return res.status(400).json({ message: error.message });
   }
-  const { password: _, ...valueWithoutPassword } = value;
-  global.users.push({
-    ...valueWithoutPassword,
-    hashedPassword: await hashPassword(value.password),
-  });
-  global.user_id = value;
-  res.status(201).json(valueWithoutPassword);
+  // const { password: _, ...valueWithoutPassword } = value;
+  // global.users.push({
+  //   ...valueWithoutPassword,
+  //   hashedPassword: await hashPassword(value.password),
+  // });
+  const hashed_password = await hashPassword(value.password);
+  let result;
+  try {
+    result = await pool.query(
+      `INSERT INTO users (email, name, hashed_password) 
+      VALUES ($1, $2, $3) RETURNING id, email, name`,
+      [value.email, value.name, hashed_password],
+    ); // note that you use a parameterized query
+  } catch (e) {
+    // the email might already be registered
+    if (e.code === "23505") {
+      // this means the unique constraint for email was violated
+      // here you return the 400 and the error message.  Use a return statement, so that
+      // you don't keep going in this function
+      return res
+        .status(400)
+        .json({ message: "A user with that email is already registered" });
+    }
+    throw e; // all other errors get passed to the error handler
+  }
+  global.user_id = result.rows[0].id;
+  res.status(201).json(result.rows[0]);
 };
 
 const logon = async (req, res) => {
   const { email, password } = req.body;
-  const user = global.users.find((user) => email == user.email);
-  if (!user || !(await comparePassword(password, user.hashedPassword))) {
+  // const user = global.users.find((user) => email == user.email);
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+    email,
+  ]);
+  const user = result.rows.length ? result.rows[0] : null;
+  if (!user || !(await comparePassword(password, user.hashed_password))) {
     return res.status(401).json({ message: "Logon failed" });
   }
 
-  global.user_id = user;
+  global.user_id = user.id;
   res.status(200).json({ name: user.name, email: user.email });
 };
 
