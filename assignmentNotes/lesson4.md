@@ -119,6 +119,10 @@ Never write your own cryptography.  Use a standard library.  It is very difficul
 
 Lesson 5 is long and tough.  This is where you learn about SQL.  We are using the Postgres implementation of SQL, which you should have installed on your laptop.  You will learn about all of the SQL verbs, and you'll practice them.
 
+If you do not know SQL, it is especially important that you allocate additional time to this lesson.
+
+For your app, you need these SQL verbs: SELECT (read), INSERT, UPDATE, DELETE.  However, we are trying to give a reasonably complete introduction to SQL, so for assignment 5a, you'll also learn about JOIN, subqueries, GROUP BY with aggregation functions such as AVG and SUM, subqueries, HAVING, and transactions.
+
 You'll then use the Postgres pg library for Node, and change all of your code to store user and task information in the database, instead of in memory.
 
 Please start this lesson early in the week.  It will take some time.
