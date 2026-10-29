@@ -19,8 +19,8 @@ app.use(express.json());
 // });
 const pool = require("./db/pg-pool");
 
-global.tasks = [];
-global.users = [];
+// global.tasks = [];
+// global.users = [];
 global.user_id = null;
 
 const authMiddleware = require("./middleware/auth");
