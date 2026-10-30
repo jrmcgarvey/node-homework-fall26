@@ -17,7 +17,8 @@ app.use(express.json());
 //     message: "POST route works",
 //   });
 // });
-const pool = require("./db/pg-pool");
+// const pool = require("./db/pg-pool");
+const prisma = require("./db/prisma");
 
 // global.tasks = [];
 // global.users = [];
@@ -34,7 +35,8 @@ const errorHandler = require("./middleware/error-handler");
 app.use("/api/users", userRouter);
 app.get("/health", async (_req, res) => {
   try {
-    await pool.query("SELECT 1");
+    // await pool.query("SELECT 1");
+    await prisma.$queryRaw`SELECT 1`;
     res.json({ status: "ok", db: "connected" });
   } catch (err) {
     res
@@ -59,8 +61,10 @@ async function shutdown(code = 0) {
   try {
     await new Promise((resolve) => server.close(resolve));
     console.log("HTTP server closed.");
-    await pool.end();
+    // await pool.end();
     // If you have DB connections, close them here
+    await prisma.$disconnect();
+    console.log("Prisma disconnected");
   } catch (err) {
     console.error("Error during shutdown:", err);
     code = 1;
