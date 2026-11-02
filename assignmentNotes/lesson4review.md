@@ -48,7 +48,7 @@ try {
     Routes for each of these.  For show, update and deleteTask, you need the id of the task in the URI.  You use a parameter in the route, viz:
 
     ```
-    router.get("/%id", taskController.show);
+    router.get("/:id", taskController.show);
     ```
 
     If the caller sends a request like `GET /api/tasks/17`, Express puts the 17 into `req.params.id`.
@@ -56,7 +56,7 @@ try {
     **Order matters in your routes.**  Suppose you add support for a `find` endpoint, so that the user can do `GET /api/tasks/find?title=clean*` to find all titles that start with clean.  Then you add the route:
 
     ```
-    router.get("/%id", taskController.show);
+    router.get("/:id", taskController.show);
     router.get("/find", taskController.find);
     ```
 
