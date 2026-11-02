@@ -7,6 +7,15 @@ const getUserAnalytics = async (req, res) => {
     // ... handle invalid ID
     return res.status(400).json({ message: "No userId was specified." });
   }
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "There is no registered user with that id." });
+  }
 
   // Use groupBy to count tasks by completion status
   const taskStats = await prisma.task.groupBy({
@@ -116,9 +125,9 @@ const getUsersWithStats = async (req, res) => {
   };
 
   // Return users and pagination
-  if (!totalUsers) {
-    return res.status(404).json({ message: "No users are registered." });
-  }
+  // if (!totalUsers) {
+  //   return res.status(404).json({ message: "No users are registered." });
+  // }
   res.status(200).json({
     // ... you need to return users and pagination
     users,
@@ -171,9 +180,9 @@ const searchTasks = async (req, res) => {
   // Return results with query and count
   // Hint: The test expects results array, query string, and count number
 
-  if (!searchResults.length) {
-    return res.status(404).json({ message: "No matching tasks were found." });
-  }
+  // if (!searchResults.length) {
+  //   return res.status(404).json({ message: "No matching tasks were found." });
+  // }
   res.status(200).json({
     results: searchResults,
     query: searchQuery,
