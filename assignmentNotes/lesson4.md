@@ -51,7 +51,7 @@ For show, update, and delete, the id of the task entry is needed.  This is to be
 GET /api/tasks/243
 ```
 
-You define this route in your router with a `/%id`, which causes the corresponding value to appear in req.params.id as the request is handled.
+You define this route in your router with a `/:id`, which causes the corresponding value to appear in req.params.id as the request is handled.
 
 So, write the code.  You can either run it or not at this point.  But there are some problems.
 
