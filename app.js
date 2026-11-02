@@ -26,8 +26,10 @@ global.user_id = null;
 
 const authMiddleware = require("./middleware/auth");
 const taskRouter = require("./routes/taskRoutes");
+const anaRouter = require("./routes/analyticsRoutes");
 
 app.use("/api/tasks", authMiddleware, taskRouter);
+app.use("/api/analytics", anaRouter);
 const userRouter = require("./routes/userRoutes");
 const notFound = require("./middleware/not-found");
 const errorHandler = require("./middleware/error-handler");
