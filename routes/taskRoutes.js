@@ -4,8 +4,8 @@ const router = express.Router();
 //create, index, show, update, deleteTask
 router.post("/", taskController.create);
 router.post("/bulk", taskController.bulkCreate);
-router.get("/%id", taskController.show);
+router.get("/:id", taskController.show);
 router.get("/", taskController.index);
-router.patch("/%id", taskController.update);
-router.delete("/%id", taskController.deleteTask);
+router.patch("/:id", taskController.update);
+router.delete("/:id", taskController.deleteTask);
 module.exports = router;
