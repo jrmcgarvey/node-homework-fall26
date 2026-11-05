@@ -13,7 +13,7 @@ Disadvantages of an ORM:
 
 - You don't learn SQL if you only use the ORM.
 - You have to check whether the ORM does the SQL you really want.
-- Sometimes the ORM won't do the SQL you want, and you have to write raw SQL and pass it to the ORM.
+- Sometimes the ORM won't do the SQL you want, and you have to write raw SQL and pass it to the ORM.  The Prisma 6 ORM, for example, can't do compound joins, and there is no support for HAVING.  Some of these omissions are addressed in later versions of Prisma, but we haven't updated the class to use a later version yet.
 - Porting between database implementations is not going to be transparent, even with the ORM, because database implementations vary.
 
 Prisma 6 has significant SQL limitations.  It won't do compound joins, for example.  It doesn't support HAVING.  This is being fixed for Prisma 8, which will be used in a later version of this class -- but Prisma 8 is quite a bit different.
