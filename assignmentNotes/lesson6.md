@@ -64,6 +64,47 @@ Compare this version (pg):
 
 With the ORM, you use objects, instead of the complicated positional handling of parameters with the pg package.  Also, column names can be mapped to JavaScript friendly versions.
 
+## The Prisma Schema
+
+It should look like this:
+
+```
+// This is your Prisma schema file
+// Learn more at https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique @db.VarChar(255)
+  name           String   @db.VarChar(30)
+  hashedPassword String   @db.VarChar(255) @map("hashed_password")
+  createdAt     DateTime @default(now()) @db.Timestamp(6) @map("created_at")
+  Task          Task[]
+  @@map("users")
+}
+
+model Task {
+  id           Int      @id @default(autoincrement())
+  title        String   @db.VarChar(255)
+  isCompleted Boolean  @default(false) @map("is_completed")
+  userId      Int       @map("user_id")
+  createdAt   DateTime @default(now()) @db.Timestamp(6) @map("created_at")
+  User        User    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  @@unique([id, userId])
+  @@map("tasks")
+}
+```
+
+The schema uses conventions to make it object-like.  Models are uppercase singular names.  When there is a relation between tables, this is represented as the model name and the related model, which in the case of a one-to-many relationship, may be an array.  Because schema names in SQL are usually lower snake case, you use `@@map` to map to the actual table or row.  Attribute names are camel case, with `@@map` used as needed to map to snake case.  Note the relation lines, which tell Prisma about which columns are foreign keys.  One can specify an action associated with the relation.  For example, one could tell Prisma to delete all the tasks belonging to the user when deleting the user.
+
 ## A Preview of Lesson 7
 
 You probably found assignment 6 to be pretty quick.  Assignment 7 is a lot tougher.  Start on it soon.  The following Prisma features are addressed in Assignment 7.
