@@ -10,7 +10,7 @@ const create = async (req, res) => {
       message: error.message,
     });
   }
-  const newTask = await prisma.task.create({
+  const newTask = await prisma.Task.create({
     data: {
       title: value.title,
       isCompleted: value.isCompleted,
@@ -55,7 +55,7 @@ const index = async (req, res) => {
   }
 
   // Get tasks with pagination and eager loading
-  const tasks = await prisma.task.findMany({
+  const tasks = await prisma.Task.findMany({
     where: whereClause,
     select: {
       id: true,
@@ -76,7 +76,7 @@ const index = async (req, res) => {
   });
 
   // Get total count for pagination metadata
-  const totalTasks = await prisma.task.count({
+  const totalTasks = await prisma.Task.count({
     where: whereClause,
   });
 
@@ -105,7 +105,7 @@ const index = async (req, res) => {
 };
 
 const show = async (req, res) => {
-  const task = await prisma.task.findUnique({
+  const task = await prisma.Task.findUnique({
     where: { userId: global.user_id, id: parseInt(req.params.id) },
     select: {
       id: true,
@@ -137,7 +137,7 @@ const update = async (req, res) => {
     });
   }
   try {
-    const task = await prisma.task.update({
+    const task = await prisma.Task.update({
       data: value,
       where: {
         id: parseInt(req.params.id),
@@ -157,7 +157,7 @@ const update = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const task = await prisma.task.delete({
+    const task = await prisma.Task.delete({
       where: {
         id: parseInt(req.params.id),
         userId: global.user_id,
@@ -205,7 +205,7 @@ const bulkCreate = async (req, res, next) => {
 
   // Use createMany for batch insertion
   try {
-    const result = await prisma.task.createMany({
+    const result = await prisma.Task.createMany({
       data: validTasks,
       skipDuplicates: false,
     });

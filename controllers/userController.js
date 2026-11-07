@@ -35,7 +35,7 @@ const register = async (req, res) => {
   try {
     const result = await prisma.$transaction(async (tx) => {
       // Create user account (similar to Assignment 6, but using tx instead of prisma)
-      const newUser = await tx.user.create({
+      const newUser = await tx.User.create({
         data: { email, name, hashedPassword },
         select: { id: true, email: true, name: true },
       });
@@ -50,10 +50,10 @@ const register = async (req, res) => {
         { title: "Add your first task", userId: newUser.id, priority: "high" },
         { title: "Explore the app", userId: newUser.id, priority: "low" },
       ];
-      await tx.task.createMany({ data: welcomeTaskData });
+      await tx.Task.createMany({ data: welcomeTaskData });
 
       // Fetch the created tasks to return them
-      const welcomeTasks = await tx.task.findMany({
+      const welcomeTasks = await tx.Task.findMany({
         where: {
           userId: newUser.id,
           title: { in: welcomeTaskData.map((t) => t.title) },
@@ -94,7 +94,7 @@ const register = async (req, res) => {
 const logon = async (req, res) => {
   let { email, password } = req.body;
   email = email.toLowerCase();
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.User.findUnique({ where: { email } });
   if (!user || !(await comparePassword(password, user.hashedPassword))) {
     return res.status(401).json({ message: "Logon failed" });
   }
