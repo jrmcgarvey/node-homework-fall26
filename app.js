@@ -1,10 +1,23 @@
 const express = require("express");
 
 const app = express();
+const rateLimiter = require("express-rate-limit");
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  }),
+);
+const helmet = require("helmet");
+app.use(helmet());
 
 app.use(express.json());
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+app.set("trust proxy", 1);
+
+const { xss } = require("express-xss-sanitizer");
+app.use(xss());
 
 // const timeRouter = require("./routes/timeRoutes");
 
