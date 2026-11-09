@@ -14,7 +14,7 @@ const create = async (req, res) => {
     data: {
       title: value.title,
       isCompleted: value.isCompleted,
-      userId: global.user_id,
+      userId: req.user.id,
       priority: value.priority,
     },
     select: { title: true, isCompleted: true, id: true, priority: true }, // specify the column values to return
@@ -28,7 +28,7 @@ const index = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
   // Build where clause with optional search filter
-  const whereClause = { userId: global.user_id };
+  const whereClause = { userId: req.user.id };
 
   const getOrderBy = (query) => {
     const validSortFields = [
@@ -106,7 +106,7 @@ const index = async (req, res) => {
 
 const show = async (req, res) => {
   const task = await prisma.Task.findUnique({
-    where: { userId: global.user_id, id: parseInt(req.params.id) },
+    where: { userId: req.user.id, id: parseInt(req.params.id) },
     select: {
       id: true,
       title: true,
@@ -141,7 +141,7 @@ const update = async (req, res) => {
       data: value,
       where: {
         id: parseInt(req.params.id),
-        userId: global.user_id,
+        userId: req.user.id,
       },
       select: { title: true, isCompleted: true, id: true, priority: true },
     });
@@ -160,7 +160,7 @@ const deleteTask = async (req, res) => {
     const task = await prisma.Task.delete({
       where: {
         id: parseInt(req.params.id),
-        userId: global.user_id,
+        userId: req.user.id,
       },
       select: { title: true, isCompleted: true, id: true },
     });
@@ -199,7 +199,7 @@ const bulkCreate = async (req, res, next) => {
       title: value.title,
       isCompleted: value.isCompleted || false,
       priority: value.priority || "medium",
-      userId: global.user_id,
+      userId: req.user.id,
     });
   }
 

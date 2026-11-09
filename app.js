@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 
 app.use(express.json());
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 // const timeRouter = require("./routes/timeRoutes");
 
@@ -22,13 +24,15 @@ const prisma = require("./db/prisma");
 
 // global.tasks = [];
 // global.users = [];
-global.user_id = null;
+// global.user_id = null;
 
-const authMiddleware = require("./middleware/auth");
+// const authMiddleware = require("./middleware/auth");
+const jwtMiddleware = require("./middleware/jwtMiddleware");
 const taskRouter = require("./routes/taskRoutes");
 const anaRouter = require("./routes/analyticsRoutes");
 
-app.use("/api/tasks", authMiddleware, taskRouter);
+// app.use("/api/tasks", authMiddleware, taskRouter);
+app.use("/api/tasks", jwtMiddleware, taskRouter);
 app.use("/api/analytics", anaRouter);
 const userRouter = require("./routes/userRoutes");
 const notFound = require("./middleware/not-found");
