@@ -105,6 +105,32 @@ model Task {
 
 The schema uses conventions to make it object-like.  Models are uppercase singular names.  When there is a relation between tables, this is represented as the model name and the related model, which in the case of a one-to-many relationship, may be an array.  Because schema names in SQL are usually lower snake case, you use `@@map` to map to the actual table or row.  Attribute names are camel case, with `@@map` used as needed to map to snake case.  Note the relation lines, which tell Prisma about which columns are foreign keys.  One can specify an action associated with the relation.  For example, one could tell Prisma to delete all the tasks belonging to the user when deleting the user.
 
+## CRUD Operations With Prisma
+
+You will use some of the following functions.  All of these are async.  These are methods on a given model (e.g. User, Task).  The model name is referred to in lower case.
+
+- prisma.model.create
+- prisma.model.createMany
+- prisma.model.update
+- prisma.model.updateMany
+- prisma.model.findUnique
+- prisma.model.findFirst
+- prisma.model.findMany
+- prisma.model.delete
+- prisma.model.deleteMany
+
+As with SQL, you specify a `where`.  You can also specify which elements are to be returned, with select. As with SQL, you can specify a `groupBy` and do various aggregation functions.  You can also specify the order, the limit, and the offset, but with all of these, the syntax is a little different from native SQL.
+
+You don't do joins, exactly, but you can use select or include to specify that some or all attributes of related objects.  For example, you can specify that a user's tasks to be returned along with the user.  These appear as nested objects, not as long rows, which is what happens with native SQL.
+
+Use the online Prisma reference to get the exact syntax with examples.  **Note:** We are using Prisma 6, so you should use the reference for that version.
+
+### Common Stumbling Blocks
+
+To get attributes of related objects, you use `select`, except when you are doing aggregation (`groupBy`) for some value in the related object.  In that case, you have to use `include`, and that returns all the attributes of the related object.
+
+One catch with `findUnique`:  The columns you search on must have an index that guarantees a unique match.  For tasks, there is such an index, specified with: ` @@unique([id, userId])`.
+
 ## A Preview of Lesson 7
 
 You probably found assignment 6 to be pretty quick.  Assignment 7 is a lot tougher.  Start on it soon.  The following Prisma features are addressed in Assignment 7.
