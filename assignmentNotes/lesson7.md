@@ -48,7 +48,7 @@ Prisma provides a way to invoke the SQL LIKE or ILIKE clauses, using the Prisma 
 
 ## Compound Objects Returned by a Prisma Query
 
-This is roughly like a JOIN, and JOIN is what is done by Prisma when it issues the actual SQL.  SQL returns a row with data from both joined tables.  Prisma, instead, returns an object with other objects imbedded in it.  For example, you could end up with a user object, where user.tasks is an array of tasks belonging to that user.  Sometimes you use `select` and sometimes `include`, but you are referencing a named relation in the prisma schema.
+This is roughly like a JOIN.  But, I don't think Prisma actually does a JOIN (although it should).  I think it does 2 queries when it issues the actual SQL.  With a JOIN, SQL returns a row with data from both joined tables.  Prisma, instead, returns an object with other objects imbedded in it.  For example, you could end up with a user object, where user.tasks is an array of tasks belonging to that user.  Sometimes you use `select` and sometimes `include`, but you are referencing a named relation in the prisma schema.
 
 ## Transactions
 
@@ -90,6 +90,8 @@ const users = await prisma.$queryRaw`
 ```
 
 This looks like string interpolation.  We have said that string interpolation is dangerous for parameters passed to an SQL query, because of the risk of SQL injection.  However, this is tagged string interpolation -- tagged with `$queryRaw`.  Prisma evaluates each of the interpolated strings and sanitizes them so that no SQL injection attack can occur.  Of course, for the simple SQL above, raw SQL would not be necessary.
+
+When you use raw SQL, you get back results just as the the `pg` package would return them.
 
 ## Preview of Lesson 8
 
