@@ -191,4 +191,25 @@ const searchTasks = async (req, res) => {
   // ... you need to return the response object
 };
 
-module.exports = { searchTasks, getUsersWithStats, getUserAnalytics };
+const usersWithPriorityTasks = async (_req, res) => {
+  const usersWithPriorityTasks = await prisma.user.findMany({
+    where: {
+      Task: { some: { priority: "high" } },
+    },
+    select: {
+      email: true,
+      Task: { where: { priority: "high" }, select: { title: true } },
+    },
+  });
+  if (!usersWithPriorityTasks.length) {
+    return res.status(404).json({ message: "no user has priority tasks." });
+  }
+  return res.json(usersWithPriorityTasks);
+};
+
+module.exports = {
+  searchTasks,
+  getUsersWithStats,
+  getUserAnalytics,
+  usersWithPriorityTasks,
+};

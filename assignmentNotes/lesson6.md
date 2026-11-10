@@ -90,6 +90,12 @@ model User {
   Task          Task[]
   @@map("users")
 }
+// note: in the above, 
+// Task Task[]
+// should probably be 
+// tasks Task[].  
+// Attributes are usually lower case, and plural for one-to-many relationships.
+// But use Task -- because that's what used in the assignment.
 
 model Task {
   id           Int      @id @default(autoincrement())
@@ -127,7 +133,27 @@ Use the online Prisma reference to get the exact syntax with examples.  **Note:*
 
 ### Common Stumbling Blocks
 
-To get attributes of related objects, you use `select`, except when you are doing aggregation (`groupBy`) for some value in the related object.  In that case, you have to use `include`, and that returns all the attributes of the related object.
+When getting attributes from relations, you can use either select or include.  Suppose the related object has 40 attributes, and you only want 2 of them.  You'd use select and name the ones you want.  Suppose the related object has 40 attributes, and you want them all.  You'd use include.  Suppose you only want 38 of them.  You'd use include with omit.
+
+You use where clauses two places:
+
+(1) To specify which objects from your primary model you want.
+
+(2) To specify which objects from your related models you want.  You may have to repeat the same filter.
+
+Example:
+
+```js
+  const usersWithPriorityTasks = await prisma.user.findMany({
+    where: {
+      Task: { some: { priority: "high" } },
+    },
+    select: {
+      email: true,
+      Task: { where: { priority: "high" }, select: { title: true } },
+    },
+  });
+  ```
 
 One catch with `findUnique`:  The columns you search on must have an index that guarantees a unique match.  For tasks, there is such an index, specified with: ` @@unique([id, userId])`.
 
@@ -135,7 +161,7 @@ One catch with `findUnique`:  The columns you search on must have an index that 
 
 You probably found assignment 6 to be pretty quick.  Assignment 7 is a lot tougher.  Start on it soon.  The following Prisma features are addressed in Assignment 7.
 
-- Eager loading / relations: This is the somewhat lame handling of JOIN operations in Prisma 6.
+- Eager loading / relations: This is the ~~somewhat lame~~ handling of JOIN operations in Prisma 6.
 - Aggregation and groupBy: You've practiced this in native SQL.
 - Transactions
 - Batch operations
