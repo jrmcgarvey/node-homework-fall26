@@ -1,4 +1,16 @@
-# Lesson 8: Fixing Authentication
+# Lesson 8: Security
+
+## Security Introduction
+
+Here are some basic facts about security that every software developer should know:
+
+1. Security is hard.  It is easy to make mistakes.  No developer should create their own cryptography or security techniques.  Use established libraries and security approaches developed by experts.
+
+2. Every developer needs to learn how to make their code secure.  Sometimes you will turn to experts, but there aren't enough security experts in the world to review/correct all the code that is developed.
+
+3. Security vunerabilities are very common.  This site [OWASP Top 10](https://top10.owasp.org/2025/) lists the current biggies.  If an app you develop has a security exposure, you are legally required to disclose this promptly.  In some cases, you have to go public with the information, by publishing it [here:](https://www.cve.org/).
+
+## Fixing Authentication
 
 As you know, we have a teensy weensy security problem in the app.  The user_id is a global.  That means that when a user logged in, any other user that accesses the app accesses all the first user's stuff.
 
@@ -38,7 +50,7 @@ A JSON Web Token is a small JSON document with a digital signature.  Only the po
 
 1. Injection attacks: The caller's request has JavaScript or SQL or other code that is executed with the data is used. To attack your app, such code might be embedded in the user's name or the task title.
 
-2. Denial of service: The caller drives too many requests so that other users can't access the server.
+2. Denial of service: The caller drives too many requests so that other users can't access the server, or sends poorly formed requests that cause the server to fail.
 
 3. Inappropriate access: The caller sends requests that should not be honored, but there is some hole in the back end.
 
@@ -54,6 +66,18 @@ For production applications, you'd need a package called CORS. This is needed wh
 - helmet: This adds some headers to advise the browser on which operations are allowed.  The amount of protection it provides for REST back ends is limited.
 - express-xss-sanitizer: Strips out JavaScript from inbound data to prevent XSS attacks.  You could add code that calls this library for each outbound request as well, in case stored data has imbedded XSS, but we won't go that far.
 - express-rate-limit: limits the rate of inbound requests from specific endpoints, to prevent a denial of service attack.
+
+## Implementation Steps
+
+1. Configure the necessary `cookie-parser` middleware.  Also, create a secret key for signing JWTs and for verifying them, and store it in the .env file.
+
+2. When the user registers or logs in, create the signed JWT and set it as a cookie.
+
+3. Replace the current middleware that uses the global user ID to check whether a user is logged on.  New middleware will instead check for the JWT in the cookie, validate it, and store the user ID as stored in the cookie.  You store the user information in req.user, in particular req.user.id.
+
+4. Change task methods to reference req.user.id instead of global.user_id.
+
+5. When the user logs off, clear the cookie.
 
 ## A preview of assignment 9
 
