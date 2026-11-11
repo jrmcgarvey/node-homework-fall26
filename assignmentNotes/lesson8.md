@@ -44,7 +44,7 @@ Cookies only work for browser front ends.  For server to server connection, API 
 
 ## JSON Web Tokens
 
-A JSON Web Token is a small JSON document with a digital signature.  Only the possesor of the secret can create a valid signature.  The signature of the JWT is checked for every request.  The JWT also contains the user ID, the CRSF token, an expiry timestamp, and sometimes a little other stuff.  But cookies should stay small, typically less than 1k.
+A JSON Web Token is a small JSON document with a digital signature.  Only the possesor of the secret can create a valid signature.  The signature of the JWT is checked for every request.  The JWT also contains the user ID, the CRSF token, an expiry timestamp, and sometimes a little other stuff.  But cookies should stay small, typically less than 1k.  **Do not store secrets in the JWT.**  It is not encrypted, so someone could read the contents if they somehow gain access to the cookie that has the JWT.
 
 ## Other attacks
 
