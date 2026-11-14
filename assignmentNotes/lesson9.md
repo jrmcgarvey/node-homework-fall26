@@ -80,7 +80,7 @@ Of course some requests don't have headers or a body.
 - You use the test database.
 - You clear the database at the start, so that your tests are repeatable.
 - If you are testing the taskController, you need to create user objects first.
-- If you are testing the processing of `/api/task` operations with Supertest, you need to do `/api/logon` first, with one of the users you created.  (You also need to test that you can't do these operations without being logged on.)
+- If you are testing the processing of `/api/task` operations with Supertest, you need to do `/api/user/logon` first, with one of the users you created.  (You also need to test that you can't do these operations without being logged on.)
 - You also test basic functions like validation.  This is simpler, as you don't need Supertest, as you don't need mock req and res objects, and as these are synchronous calls.
 
 ## Shutting down the tests
